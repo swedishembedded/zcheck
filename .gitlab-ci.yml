@@ -1,0 +1,13 @@
+image: swedishembedded/build:v0.26.4-1
+
+default:
+  tags:
+    - docker
+
+stages:
+ - build
+
+build:
+    stage: build
+    script:
+        - echo "Empty"
