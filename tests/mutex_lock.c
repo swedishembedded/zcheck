@@ -14,12 +14,12 @@ int function(){
 		do_something();
 		// no return so we should not match this
 	}
-	k_mutex_unlock(l);
+	k_mutex_unlock(&lock);
 	r = produce_something();
 	if(r){
 		return -EINVAL; // this is valid
 	}
-	k_mutex_lock(l);
+	k_mutex_lock(&lock, K_FOREVER);
 	r = produce_something();
 	if(r){
 		return -EINVAL; // here an unlock is missing

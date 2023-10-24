@@ -12,11 +12,13 @@ void func(int a){
 }
 
 static int ok_second_static_global;
+bool done;
 
 int func(int a, int b, int *c){
 	static int fail_second_static_local;
 	*c = ok_second_static_global;
 	a = 123;
+	done = true;
 	b = GLOBAL_CONSTANT;
 	int ret;
 	fail_second_static_local = ok_second_static_global;

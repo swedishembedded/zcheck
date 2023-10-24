@@ -6,7 +6,7 @@ type T;
 position p;
 @@
 ... when any
-extern T I@p;
+- extern T I@p;
 
 @script:python@
 p << r.p;
