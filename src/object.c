@@ -12,3 +12,7 @@ int fun(int a){
 	// not good
 	state = 1;
 }
+
+static int fun_not_changed(int a, int b){
+	return 0;
+}

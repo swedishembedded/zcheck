@@ -1,3 +1,4 @@
+---
 image: swedishembedded/build:v0.26.4-1
 
 default:
@@ -7,7 +8,11 @@ default:
 stages:
  - build
 
+# This job builds applications
 build:
     stage: build
+    before_script:
+        - apt-get update
+        - apt-get install -q -y coccinelle
     script:
-        - echo "Empty"
+        - make check

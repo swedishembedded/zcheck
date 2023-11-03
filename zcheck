@@ -1,0 +1,14 @@
+#!/bin/bash
+
+ROOT="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
+
+set -e
+set -o pipefail
+
+for DIR in $@
+do
+	for COCCI in "${ROOT}/src/"/*.cocci;
+	do
+		spatch --very-quiet -D report --sp-file "${COCCI}" "${DIR}" 2>/dev/null || true
+	done
+done

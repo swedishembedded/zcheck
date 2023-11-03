@@ -1,30 +1,34 @@
 virtual report
+virtual patch
 
-@bool@
-identifier I = {true, false};
-identifier C;
+@r@
+type T;
+identifier I;
 position p;
 @@
-C = I@p;
+T I@p;
 
+@bad@
+identifier fn;
+type r.T;
+identifier r.I;
 @@
-global idexpression I;
-expression C;
-position p != {bool.p};
-@@
-* I = C@p;
+fn(...){
+...
+T I;
+...
+}
 
-@c@
-constant I;
-identifier C;
-position p;
+@replace depends on !bad && patch@
+type r.T;
+identifier r.I;
 @@
-C = I@p;
++ #if 0
+T I;
++ #endif
 
+@script:python depends on !bad && report@
+i << r.I;
+p << r.p;
 @@
-global idexpression I;
-identifier C;
-position p != {c.p, bool.p};
-@@
-* C = I@p;
-
+coccilib.report.print_report(p[0], "global variable '%s' found" % (i))

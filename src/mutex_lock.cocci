@@ -1,29 +1,57 @@
 virtual report
 virtual patch
 
-@ r exists @
-expression l;
-identifier r, e;
-position p;
+@ replace depends on patch exists @
+identifier R;
+expression L;
 @@
-r = k_mutex_lock(l, ...)
-... when any
-if(r){ ... }
-... when != e = r
+R = k_mutex_lock(L, ...)
+... when != k_mutex_unlock(L)
 	when any
-if(e){
-... when any
-	when != k_mutex_unlock(l)
-	return@p ...;
-}
-... when != k_mutex_unlock(l)
-k_mutex_unlock(l);
+if(R) {...}
+... when != k_mutex_unlock(L)
+	when any
++ k_mutex_unlock(L);
+return ...;
 
+@ replace2 depends on patch @
+expression L;
+@@
+k_mutex_lock(L, ...)
+... when != k_mutex_unlock(L)
++ k_mutex_unlock(L);
+return ...;
 
-@ script:python depends on r@
+@ r exists @
+expression L;
+identifier R;
+position p, pl;
+@@
+R = k_mutex_lock@pl(L, ...)
+... when != k_mutex_unlock(L)
+	when any
+if(R){ ... }
+... when != k_mutex_unlock(L)
+	when any
+return@p ...;
+
+@ r2 exists @
+expression L;
+position p != {r.p};
+position pl != {r.pl};
+@@
+k_mutex_lock@pl(L, ...)
+... when != k_mutex_unlock(L)
+return@p ...;
+
+@ script:python depends on report@
 p << r.p;
 @@
+coccilib.report.print_report(p[0], "Mutex unlock missing")
 
-// This Python script runs if a locked mutex is not unlocked in all code paths.
-msg = "Mutex unlock missing"
-coccilib.report.print_report(p[0], msg)
+@ script:python depends on report@
+p << r2.p;
+@@
+coccilib.report.print_report(p[0], "Mutex unlock missing")
+
+

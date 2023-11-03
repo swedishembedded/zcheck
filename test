@@ -1,0 +1,28 @@
+set -e
+
+cocci=$1
+base_name=$(basename "$cocci" .cocci)
+c_file="$(dirname "${cocci}")/${base_name}.c"
+tmp_file="$(dirname "${cocci}")/${base_name}.tmp"
+res_file="$(dirname "${cocci}")/${base_name}.res"
+
+echo "TESTCASE: $cocci"
+
+[ ! -e "${c_file}" ] && {
+	echo "Missing C file: ${c_file}"
+	exit 1
+}
+
+[ ! -e "${res_file}" ] && {
+	echo "Missing results file: ${res_file}"
+	exit 1
+}
+
+spatch --very-quiet --no-show-diff -D patch --sp-file "${cocci}" -o "${tmp_file}" "${c_file}"
+
+diff "${res_file}" "${tmp_file}" || {
+	echo "Files differ. Patch failed"
+	exit 1
+}
+
+rm "${tmp_file}"

@@ -1,6 +1,7 @@
 virtual report
+virtual patch
 
-@r@
+@r depends on patch@
 identifier I, fn;
 expression E;
 type T !~ ".*struct.*";
@@ -8,9 +9,11 @@ type T !~ ".*struct.*";
 fn(...){
 <+...
 (
-- static T I;
+- static
+T I;
 |
-- static T I = E;
+- static
+T I = E;
 )
 ...+>
 }
